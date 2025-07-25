@@ -8,15 +8,39 @@ const githubAvatars = [
   "https://avatars.githubusercontent.com/u/6?s=64",       //ivey
   "https://avatars.githubusercontent.com/u/21?s=64"       // bkeepers
 ];
+
 // --- INIT DATA & UTILS ---
 let state = JSON.parse(localStorage.getItem("dashboard-state") || "{}");
-if (!state.courses) state.courses = [{name:"Sample Course", meta:"Fall 2025", grade:"98%", expanded:false}];
+
+// === COURSE LIST UPDATED: SCIENCE & MATH ===
+state.courses = [
+  {name: "General Biology I", meta: "", grade: "", expanded: false},
+  {name: "General Biology II", meta: "", grade: "", expanded: false},
+  {name: "General Genetics", meta: "", grade: "", expanded: false},
+  {name: "Microbiology", meta: "", grade: "", expanded: false},
+  {name: "Anatomy and Physiology", meta: "", grade: "", expanded: false},
+  {name: "General Chemistry I", meta: "", grade: "", expanded: false},
+  {name: "General Chemistry II", meta: "", grade: "", expanded: false},
+  {name: "Organic Chemistry I", meta: "", grade: "", expanded: false},
+  {name: "Organic Chemistry II", meta: "", grade: "", expanded: false},
+  {name: "Biochemistry", meta: "", grade: "", expanded: false},
+  {name: "Algebra I", meta: "", grade: "", expanded: false},
+  {name: "Algebra II", meta: "", grade: "", expanded: false},
+  {name: "Pre-Calculus", meta: "", grade: "", expanded: false},
+  {name: "Calculus I", meta: "", grade: "", expanded: false},
+  {name: "Calculus II", meta: "", grade: "", expanded: false},
+  {name: "Calculus III", meta: "", grade: "", expanded: false},
+  {name: "Physics I", meta: "", grade: "", expanded: false},
+  {name: "Physics II", meta: "", grade: "", expanded: false}
+];
+
 if (!state.todos) state.todos = [];
 if (!state.calendar) state.calendar = [];
 if (!state.profile) state.profile = {};
 if (!state.prefs) state.prefs = {theme:"light", grid:true, showGrades:true, accent:"#bf3cff", fontsize:16, contrast:false, landing:"Dashboard"};
 if (!state.banner) state.banner = "";
-function saveState() {localStorage.setItem("dashboard-state", JSON.stringify(state));}
+
+function saveState() { localStorage.setItem("dashboard-state", JSON.stringify(state)); }
 function $(id){return document.getElementById(id);}
 function show(el){el.classList.remove('hidden');}
 function hide(el){el.classList.add('hidden');}
@@ -223,3 +247,4 @@ function notify(txt){
 if(state.todos.some(t=>!t.checked)) setTimeout(()=>notify("You have pending tasks!"), 2000);
 saveState();
 applyPrefs();
+

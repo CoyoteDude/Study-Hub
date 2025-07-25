@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Dashboard</title>
+  <link href="style.css" rel="stylesheet">
+</head>
+<body class="light-theme">
+  <nav class="dashboard-navbar">
+    <span class="navbar-title">Dashboard</span>
+    <div class="navbar-actions">
+      <button id="menu-btn">☰</button>
+      <button id="settings-btn"><img src="gear.svg" alt="Settings" style="height:1.5em"></button>
+    </div>
+    <div id="dropdown-menu" class="dropdown-menu hidden">
+      <a href="#" id="files-link">Files</a>
+      <a href="#" id="settings-link">Settings</a>
+      <a href="#" id="toggle-dark">Toggle Dark Mode</a>
+    </div>
+  </nav>
+  <main>
+    <section id="dashboard-courses" class="course-tiles">
+      <!-- No courses yet: blank state shown -->
+      <div class="empty-state">
+        <p>No enrolled courses.<br>
+        Add courses in Settings.</p>
+      </div>
+    </section>
+  </main>
+  <!-- Settings Panel (hidden by default) -->
+  <div id="settings-panel" class="settings-panel hidden">
+    <h2>Settings</h2>
+    <h3>Preferences</h3>
+    <label>Landing Page:
+      <select id="landing-select">
+        <option>Dashboard</option>
+        <option>To-Do</option>
+        <option>Calendar</option>
+        <option>Notifications</option>
+        <option>Inbox</option>
+      </select>
+    </label>
+    <h3>Integration</h3>
+    <button id="download-ical">Download iCal File</button>
+    <h3>Visibility</h3>
+    <p>No courses to select right now.</p>
+    <button id="close-settings">Close</button>
+  </div>
+  <script src="dashboard.js"></script>
+</body>
+</html>

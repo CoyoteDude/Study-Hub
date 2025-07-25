@@ -9,29 +9,28 @@ const githubAvatars = [
   "https://avatars.githubusercontent.com/u/21?s=64"       // bkeepers
 ];
 
-// --- INIT DATA & UTILS ---
 let state = JSON.parse(localStorage.getItem("dashboard-state") || "{}");
 
-// === COURSE LIST UPDATED: SCIENCE & MATH ===
+// === COURSE LIST: SCIENCE & MATH WITH VISIBILITY ===
 state.courses = [
-  {name: "General Biology I", meta: "", grade: "", expanded: false},
-  {name: "General Biology II", meta: "", grade: "", expanded: false},
-  {name: "General Genetics", meta: "", grade: "", expanded: false},
-  {name: "Microbiology", meta: "", grade: "", expanded: false},
-  {name: "Anatomy and Physiology", meta: "", grade: "", expanded: false},
-  {name: "General Chemistry I", meta: "", grade: "", expanded: false},
-  {name: "General Chemistry II", meta: "", grade: "", expanded: false},
-  {name: "Organic Chemistry I", meta: "", grade: "", expanded: false},
-  {name: "Organic Chemistry II", meta: "", grade: "", expanded: false},
-  {name: "Biochemistry", meta: "", grade: "", expanded: false},
-  {name: "Algebra I", meta: "", grade: "", expanded: false},
-  {name: "Algebra II", meta: "", grade: "", expanded: false},
-  {name: "Pre-Calculus", meta: "", grade: "", expanded: false},
-  {name: "Calculus I", meta: "", grade: "", expanded: false},
-  {name: "Calculus II", meta: "", grade: "", expanded: false},
-  {name: "Calculus III", meta: "", grade: "", expanded: false},
-  {name: "Physics I", meta: "", grade: "", expanded: false},
-  {name: "Physics II", meta: "", grade: "", expanded: false}
+  {name: "General Biology I", meta: "", grade: "", expanded: false, visible: true},
+  {name: "General Biology II", meta: "", grade: "", expanded: false, visible: true},
+  {name: "General Genetics", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Microbiology", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Anatomy and Physiology", meta: "", grade: "", expanded: false, visible: true},
+  {name: "General Chemistry I", meta: "", grade: "", expanded: false, visible: true},
+  {name: "General Chemistry II", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Organic Chemistry I", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Organic Chemistry II", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Biochemistry", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Algebra I", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Algebra II", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Pre-Calculus", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Calculus I", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Calculus II", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Calculus III", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Physics I", meta: "", grade: "", expanded: false, visible: true},
+  {name: "Physics II", meta: "", grade: "", expanded: false, visible: true}
 ];
 
 if (!state.todos) state.todos = [];
@@ -55,10 +54,12 @@ function applyPrefs() {
   $("font-size-slider").value = state.prefs.fontsize || 16;
 }
 applyPrefs();
+
 // --- Avatar Picker ---
 function renderAvatarPicker() {
   const current = state.profile.avatar || githubAvatars[0];
   const avatarList = $("avatar-list");
+  if (!avatarList) return;
   avatarList.innerHTML = "";
   githubAvatars.forEach(url => {
     const img = document.createElement("img");
@@ -86,11 +87,13 @@ $("profile-avatar").onchange = e=>{
     }; r.readAsDataURL(file);}
 };
 renderAvatarPicker();
+
 // --- NAV/menu ---
 $("menu-btn").onclick = ()=>{$("dropdown-menu").classList.toggle("hidden");};
-$("settings-btn").onclick = ()=>{show($("settings-panel"));}
+$("settings-btn").onclick = ()=>{show($("settings-panel")); renderCourseVisibilitySettings();};
 $("settings-link").onclick = ()=>{
-  show($("settings-panel")); hide($("dropdown-menu"));};
+  show($("settings-panel")); hide($("dropdown-menu")); renderCourseVisibilitySettings();
+};
 $("toggle-dark").onclick = ()=>{
   state.prefs.theme = document.body.classList.toggle("dark-theme") ? "dark" : "light";
   saveState(); applyPrefs();
@@ -105,6 +108,24 @@ $("contrast-toggle").onchange = e => {state.prefs.contrast = e.target.checked; s
 $("landing-select").onchange = e => {state.prefs.landing = e.target.value; saveState();}
 $("grade-toggle").onchange = e => {state.prefs.showGrades = e.target.checked; saveState(); renderCourses();}
 $("grid-toggle").onchange = e=>{state.prefs.grid = e.target.checked; saveState(); renderCourses();};
+
+// --- VISIBILITY TOGGLE CONTROLS ---
+function renderCourseVisibilitySettings() {
+  const container = $("course-visibility-controls");
+  if (!container) return;
+  container.innerHTML = state.courses.map((c, i) => 
+    `<label style="display:block;margin:2px 0;">
+      <input type="checkbox" ${c.visible !== false ? "checked" : ""} onchange="toggleCourseVisible(${i})">
+      ${c.name}
+    </label>`
+  ).join('');
+}
+window.toggleCourseVisible = function(idx) {
+  state.courses[idx].visible = !state.courses[idx].visible;
+  saveState();
+  renderCourses();
+  renderCourseVisibilitySettings();
+};
 // --- ANNOUNCEMENT BANNER ---
 function renderBanner() {
   if(state.banner){
@@ -120,8 +141,8 @@ renderBanner();
 // --- COURSES: Drag-Drop, Add, Remove, Expand ---
 function renderCourses() {
   let html = "";
-  let arr = state.courses;
-  if (!arr.length) html = "<div class='empty-state'>No enrolled courses.<br>Add courses in Settings.</div>";
+  let arr = state.courses.filter(c => c.visible !== false);
+  if (!arr.length) html = "<div class='empty-state'>No enrolled courses (enable in Settings).</div>";
   else arr.forEach((c,i)=>{
     const classes = state.prefs.grid ? "course-tile" : "course-tile-list";
     html += `<div class="${classes}" draggable="true" data-i="${i}">
